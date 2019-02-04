@@ -7,6 +7,8 @@ var galleryHeight = 500;
 var imagesObjects = [];
 var galleryDiv;
 var imagesContainer;
+var leftnumber=1;
+var rightnumber=1;
 
 function start() {
     body = document.body;
@@ -25,11 +27,38 @@ function createGalleryStructure() {
     galleryDiv.style.overflow = "hidden";
     body.appendChild(galleryDiv);
 
-    var buttons = document.createElement("div");
-    var leftButton = document.createElement("div");
-    var rightButton = document.createElement("div");
     createImagesConstainer();
     createButtons();
+    createLRButtons();
+}
+
+function createLRButtons() {
+    var lrButtons = document.createElement("div");
+    var lrButton;
+    lrButtons.style.position = "absolute";
+    lrButtons.style.bottom = "50%";
+    lrButtons.style.marginLeft = "5%";
+    galleryDiv.appendChild(lrButtons);
+    for (var b = 0; b < 2; b++) {
+
+        lrButton = document.createElement("div");
+        lrButton.style.display = "inline-block";
+        lrButton.style.width = "40px";
+        lrButton.style.height = "40px";
+        lrButton.style.background = "black";
+        lrButton.style.borderRadius = "50%";
+        lrButton.className = "lrButton" + b;
+        if (b == 0) {
+            lrButton.style.marginRight = "550px";
+            lrButton.addEventListener("click", buttonLeftClick);
+        }
+        else {
+            lrButton.addEventListener("click", buttonRightClick);
+        }
+        lrButtons.appendChild(lrButton);
+
+
+    }
 }
 
 function createButtons() {
@@ -57,9 +86,28 @@ function createButtons() {
     button.style.marginRight = "0";
 }
 
+function buttonLeftClick() {
+    
+    if (leftnumber > (images.length-1)) {
+        leftnumber = 0;
+    }
+    imagesContainer.style.left = `${-1 * leftnumber * galleryWidth}px`;
+    leftnumber += 1;
+}
+function buttonRightClick() { 
+    
+    if (rightnumber > 1) {
+        rightnumber = images.length;
+    }
+    
+    imagesContainer.style.left = `${-1 * rightnumber* galleryWidth}px`;
+    rightnumber -= 1;
+}
+
 function buttonClick() {
     var n = parseInt(this.className.substr(6));
-    console.log(n);
+    leftnumber = (n+1);
+    rightnumber = (n+1);
     imagesContainer.style.left = `${-1 * n * galleryWidth}px`;
 }
 
