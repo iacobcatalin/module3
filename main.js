@@ -7,15 +7,15 @@ var galleryHeight = 500;
 var imagesObjects = [];
 var galleryDiv;
 var imagesContainer;
-var leftnumber=1;
+var leftnumber=(images.length - 1);
 var rightnumber=1;
+var slideIndex = 0;
 
 function start() {
     body = document.body;
-
     createGalleryStructure();
     loadImage();
-
+    carousel();
 }
 
 function createGalleryStructure() {
@@ -66,7 +66,7 @@ function createButtons() {
     var button;
     buttons.style.position = "absolute";
     buttons.style.bottom = "10px";
-    buttons.style.marginLeft = "50%"; /// utilizate pentru centrare 
+    buttons.style.marginLeft = "50%"; /// utilizate pentru centrare
     buttons.style.transform = "translateX(-50%)"; /// utilizate pentru centrare
     galleryDiv.appendChild(buttons);
     for (var b = 0; b < images.length; b++) {
@@ -86,29 +86,42 @@ function createButtons() {
     button.style.marginRight = "0";
 }
 
-function buttonLeftClick() {
-    
-    if (leftnumber > (images.length-1)) {
-        leftnumber = 0;
+function buttonRightClick() {
+    if (rightnumber > (images.length-1)) {
+        rightnumber = 0;
     }
-    imagesContainer.style.left = `${-1 * leftnumber * galleryWidth}px`;
-    leftnumber += 1;
+    imagesContainer.style.left = `${-1 * rightnumber * galleryWidth}px`;
+    leftnumber=rightnumber-1;
+    rightnumber += 1;
 }
-function buttonRightClick() { 
-    
-    if (rightnumber > 1) {
-        rightnumber = images.length;
+function buttonLeftClick() {
+    if (leftnumber < 0) {
+        leftnumber = (images.length - 1);
     }
-    
-    imagesContainer.style.left = `${-1 * rightnumber* galleryWidth}px`;
-    rightnumber -= 1;
+    imagesContainer.style.left = `${-1 * leftnumber* galleryWidth}px`;
+    rightnumber=leftnumber+1;
+    leftnumber -= 1;
 }
 
 function buttonClick() {
     var n = parseInt(this.className.substr(6));
-    leftnumber = (n+1);
+    leftnumber = n;
     rightnumber = (n+1);
     imagesContainer.style.left = `${-1 * n * galleryWidth}px`;
+}
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("gallery")[0].getElementsByTagName('div')[0];
+  // console.log(x.length);
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+    console.log(x[i]);
+  }
+  slideIndex++;
+  if (slideIndex > x.length) {slideIndex = 1}
+  // x[slideIndex-1].style.display = "block";
+  setTimeout(carousel, 2000); // Change image every 2 seconds
 }
 
 function createImagesConstainer() {
@@ -119,7 +132,7 @@ function createImagesConstainer() {
     imagesContainer.style.position = "absolute";
     imagesContainer.style.fontSize = "0";
     imagesContainer.style.left = "0"; // trebuie de stiut de unde pleci
-    imagesContainer.style.transition = "left .2s"; // tranzitie de .2s 
+    imagesContainer.style.transition = "left .2s"; // tranzitie de .2s
     galleryDiv.appendChild(imagesContainer);
 
     for (var i = 0; i < images.length; i++) {
