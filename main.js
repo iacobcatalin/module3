@@ -7,15 +7,14 @@ var galleryHeight = 500;
 var imagesObjects = [];
 var galleryDiv;
 var imagesContainer;
-var leftnumber=(images.length - 1);
-var rightnumber=1;
-var slideIndex = 0;
+var leftnumber = (images.length - 1);
+var rightnumber = 1;
+var autoSlider;
 
 function start() {
     body = document.body;
     createGalleryStructure();
     loadImage();
-    carousel();
 }
 
 function createGalleryStructure() {
@@ -25,11 +24,21 @@ function createGalleryStructure() {
     galleryDiv.style.height = `${galleryHeight}px`; //template literals
     galleryDiv.style.position = "relative";
     galleryDiv.style.overflow = "hidden";
+    galleryDiv.addEventListener('mouseover', onMouseHoverGallery);
+    galleryDiv.addEventListener('mouseout', onMouseOutGallery);
     body.appendChild(galleryDiv);
 
     createImagesConstainer();
     createButtons();
     createLRButtons();
+
+}
+function onMouseHoverGallery(){
+    clearInterval(autoSlider);
+}
+
+function onMouseOutGallery(){
+    autoSlider = setInterval(buttonRightClick, 3000);
 }
 
 function createLRButtons() {
@@ -46,8 +55,9 @@ function createLRButtons() {
         lrButton.style.width = "40px";
         lrButton.style.height = "40px";
         lrButton.style.background = "black";
+        lrButton.addEventListener('mouseover', mouseOver);
+        lrButton.addEventListener('mouseout', mouseOut);
         lrButton.style.borderRadius = "50%";
-        lrButton.className = "lrButton" + b;
         if (b == 0) {
             lrButton.style.marginRight = "550px";
             lrButton.addEventListener("click", buttonLeftClick);
@@ -56,8 +66,6 @@ function createLRButtons() {
             lrButton.addEventListener("click", buttonRightClick);
         }
         lrButtons.appendChild(lrButton);
-
-
     }
 }
 
@@ -70,7 +78,6 @@ function createButtons() {
     buttons.style.transform = "translateX(-50%)"; /// utilizate pentru centrare
     galleryDiv.appendChild(buttons);
     for (var b = 0; b < images.length; b++) {
-
         button = document.createElement("div");
         button.style.display = "inline-block";
         button.style.width = "20px";
@@ -80,6 +87,8 @@ function createButtons() {
         button.style.borderRadius = "50%";
         button.className = "button" + b;
         button.addEventListener("click", buttonClick);
+        button.addEventListener('mouseover', mouseOver);
+        button.addEventListener('mouseout', mouseOut);
         buttons.appendChild(button);
         button.style.marginRight = "5px";
     }
@@ -87,41 +96,27 @@ function createButtons() {
 }
 
 function buttonRightClick() {
-    if (rightnumber > (images.length-1)) {
+    if (rightnumber > (images.length - 1)) {
         rightnumber = 0;
     }
     imagesContainer.style.left = `${-1 * rightnumber * galleryWidth}px`;
-    leftnumber=rightnumber-1;
+    leftnumber = rightnumber - 1;
     rightnumber += 1;
 }
 function buttonLeftClick() {
     if (leftnumber < 0) {
         leftnumber = (images.length - 1);
     }
-    imagesContainer.style.left = `${-1 * leftnumber* galleryWidth}px`;
-    rightnumber=leftnumber+1;
+    imagesContainer.style.left = `${-1 * leftnumber * galleryWidth}px`;
+    rightnumber = leftnumber + 1;
     leftnumber -= 1;
 }
 
 function buttonClick() {
     var n = parseInt(this.className.substr(6));
-    leftnumber = n;
-    rightnumber = (n+1);
+    leftnumber = (n - 1);
+    rightnumber = (n + 1);
     imagesContainer.style.left = `${-1 * n * galleryWidth}px`;
-}
-
-function carousel() {
-  var i;
-  var x = document.getElementsByClassName("gallery")[0].getElementsByTagName('div')[0];
-  // console.log(x.length);
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-    console.log(x[i]);
-  }
-  slideIndex++;
-  if (slideIndex > x.length) {slideIndex = 1}
-  // x[slideIndex-1].style.display = "block";
-  setTimeout(carousel, 2000); // Change image every 2 seconds
 }
 
 function createImagesConstainer() {
@@ -138,6 +133,7 @@ function createImagesConstainer() {
     for (var i = 0; i < images.length; i++) {
 
         imageContainer = document.createElement("div");
+        imageContainer.className = "images";
         imageContainer.style.display = "inline-block";
         imageContainer.style.position = "relative";
         imageContainer.style.width = galleryWidth + "px";
@@ -146,6 +142,14 @@ function createImagesConstainer() {
         // imageContainer.style.background = `#${Math.floor(Math.random() * 0xffffff).toString(16)}`;
         imagesContainer.appendChild(imageContainer);
     }
+}
+
+function mouseOver(event) {
+    event.target.style.background = 'red';
+}
+
+function mouseOut(event) {
+    event.target.style.background = 'black';
 }
 
 function loadImage() {
@@ -162,17 +166,6 @@ function loadImage() {
 }
 
 function imageLoaded(e) {
-    // var prevVal;
-    // if (this.width > galleryWidth || this.height > galleryHeight) {
-    //     if (this.width > this.height) {
-    //         var prevVal = this.width;
-    //         this.width *= galleryWidth / prevVal;
-    //         this.height *=  galleryWidth / prevVal;
-    //     } else {
-
-    //     }
-    // }
-
     var height = this.height;
     var width = this.width;
     if (width > galleryWidth || height > galleryWidth) {
