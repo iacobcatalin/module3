@@ -10,6 +10,7 @@ var imagesContainer;
 var leftnumber = (images.length - 1);
 var rightnumber = 1;
 var autoSlider;
+var slideshowTimeout = 2500;
 
 function start() {
     body = document.body;
@@ -24,21 +25,21 @@ function createGalleryStructure() {
     galleryDiv.style.height = `${galleryHeight}px`; //template literals
     galleryDiv.style.position = "relative";
     galleryDiv.style.overflow = "hidden";
-    galleryDiv.addEventListener('mouseover', onMouseHoverGallery);
-    galleryDiv.addEventListener('mouseout', onMouseOutGallery);
+    // galleryDiv.addEventListener('mouseover', onMouseHoverGallery);
+    // galleryDiv.addEventListener('mouseout', onMouseOutGallery);
     body.appendChild(galleryDiv);
 
     createImagesConstainer();
     createButtons();
     createLRButtons();
-
+    onMouseOutGallery();
 }
 function onMouseHoverGallery(){
     clearInterval(autoSlider);
 }
 
 function onMouseOutGallery(){
-    autoSlider = setInterval(buttonRightClick, 3000);
+    autoSlider = setInterval(buttonSlideshowClick, slideshowTimeout);
 }
 
 function createLRButtons() {
@@ -102,7 +103,19 @@ function buttonRightClick() {
     imagesContainer.style.left = `${-1 * rightnumber * galleryWidth}px`;
     leftnumber = rightnumber - 1;
     rightnumber += 1;
+    onMouseHoverGallery();
+    onMouseOutGallery();
 }
+
+function buttonSlideshowClick() {
+    if (rightnumber > (images.length - 1)) {
+        rightnumber = 0;
+    }
+    imagesContainer.style.left = `${-1 * rightnumber * galleryWidth}px`;
+    leftnumber = rightnumber - 1;
+    rightnumber += 1;
+}
+
 function buttonLeftClick() {
     if (leftnumber < 0) {
         leftnumber = (images.length - 1);
@@ -110,6 +123,8 @@ function buttonLeftClick() {
     imagesContainer.style.left = `${-1 * leftnumber * galleryWidth}px`;
     rightnumber = leftnumber + 1;
     leftnumber -= 1;
+    onMouseHoverGallery();
+    onMouseOutGallery();
 }
 
 function buttonClick() {
@@ -117,6 +132,8 @@ function buttonClick() {
     leftnumber = (n - 1);
     rightnumber = (n + 1);
     imagesContainer.style.left = `${-1 * n * galleryWidth}px`;
+    onMouseHoverGallery();
+    onMouseOutGallery();
 }
 
 function createImagesConstainer() {
